@@ -1,0 +1,21 @@
+{
+  "name": "JIRAPP",
+  "description": "Init presenter handler for JIRA board filters",
+  "version": "1.0",
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "run_at": "document_idle",
+      "matches": ["https://jiraosl.firmglobal.com/*"],
+      "js": ["jira.js"]
+    }
+  ],
+  "manifest_version": 2
+}
