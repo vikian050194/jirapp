@@ -1,22 +1,38 @@
 const addDailyFooter = () => {
-	let countDownTimer = 60;
+	let countDownTimer = 90;
+	const textColor = "snow";
+	const initialBackgroundColor = "#1ba548";
+	const overtimeBackgroundColor = "#e41b13";
+
+	const getTimerValue = () => {
+		const absValue = Math.abs(countDownTimer);
+		const date = new Date(0, 0, 0, 0, 0, absValue);
+		const minutes = date.getMinutes();
+		const seconds = date.getSeconds();
+		const result = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+
+		return result;
+	}
 
 	let footer = document.createElement("div");
 	footer.id = "daily";
 	footer.style.position = "absolute";
-	footer.style.backgroundColor = "grey";
+	footer.style.backgroundColor = initialBackgroundColor;
+	footer.style.color = textColor;
 	footer.style.bottom = "0px";
 	footer.style.width = "100%";
 	footer.style.height = "10%";
 	footer.style.zIndex = 1000;
 	footer.style.fontSize = "4rem";
 	footer.style.textAlign = "center";
-	footer.innerText = countDownTimer;
+	footer.innerText = getTimerValue();
 
 	const id = setInterval(() => {
-		footer.innerText = --countDownTimer
-		if(countDownTimer < 0){
-			footer.style.backgroundColor = "red";
+		countDownTimer--;
+		footer.innerText = getTimerValue();
+
+		if (countDownTimer < 0) {
+			footer.style.backgroundColor = overtimeBackgroundColor;
 		}
 	}, 1000);
 
@@ -33,7 +49,7 @@ const removeDailyFooter = (id) => {
 const apply = () => {
 	const filters = [...document.querySelectorAll("a.js-quickfilter-button")].filter(f => f.innerText.length === 2);
 
-	if(filters.length === 0){
+	if (filters.length === 0) {
 		setTimeout(apply, 1000);
 		return;
 	}
@@ -42,9 +58,9 @@ const apply = () => {
 	const getFilterName = () => filters[index].innerText;
 
 	chrome.runtime.sendMessage("fullscreen");
-	chrome.runtime.sendMessage("zoom");
+	// chrome.runtime.sendMessage("zoom");
 
-	if([...document.querySelector("body").classList].indexOf("ghx-header-compact") === -1){
+	if ([...document.querySelector("body").classList].indexOf("ghx-header-compact") === -1) {
 		document.querySelector("span.aui-icon.aui-icon.aui-icon-small.aui-iconfont-vid-full-screen-on").click();
 	}
 
@@ -52,24 +68,24 @@ const apply = () => {
 	const previousKeys = ["ArrowLeft", "PageUp", "Backspace"];
 	const toggleKeys = ["."];
 	const keys = [...nextKeys, ...previousKeys, ...toggleKeys];
-	
+
 	let index = filters.indexOf(document.querySelector("a.js-quickfilter-button.ghx-active"));
-	let isFilterEnabled = false;
+	let isFilterEnabled = index !== -1;
 
 	const max = filters.length - 1;
-	const click = () => { 
+	const click = () => {
 		filters[index].click();
 		isFilterEnabled = !isFilterEnabled;
 
-		if(isFilterEnabled){
+		if (isFilterEnabled) {
 			intervalId = addDailyFooter(getFilterName());
-		} else{
+		} else {
 			removeDailyFooter(intervalId);
 		}
 	};
 
 	const moveNext = () => {
-		if(!isFilterEnabled){
+		if (!isFilterEnabled) {
 			return;
 		}
 
@@ -84,10 +100,10 @@ const apply = () => {
 	};
 
 	const movePrevious = () => {
-		if(!isFilterEnabled){
+		if (!isFilterEnabled) {
 			return;
 		}
-		
+
 		click();
 		index--;
 
@@ -101,7 +117,7 @@ const apply = () => {
 	if (index === -1) {
 		index = 0;
 		click();
-	} else{
+	} else {
 		intervalId = addDailyFooter(getFilterName());
 	}
 
