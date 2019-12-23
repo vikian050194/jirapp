@@ -18,18 +18,26 @@ const addDailyFooter = () => {
 	footer.id = "daily";
 	footer.style.position = "absolute";
 	footer.style.backgroundColor = initialBackgroundColor;
-	footer.style.color = textColor;
 	footer.style.bottom = "0px";
 	footer.style.width = "100%";
-	footer.style.height = "10%";
 	footer.style.zIndex = 1000;
-	footer.style.fontSize = "4rem";
+	footer.style.justifyContent = "center";
+	footer.style.alignItems = "center";
+	
 	footer.style.textAlign = "center";
-	footer.innerText = getTimerValue();
+	footer.style.display = "flex";
+
+	let timer = document.createElement("span");
+	timer.style.color = textColor;
+	timer.style.fontSize = "64px";
+	timer.style.backgroundColor = "transparent";
+	timer.innerText = getTimerValue();
+
+	footer.appendChild(timer);
 
 	const id = setInterval(() => {
 		countDownTimer--;
-		footer.innerText = getTimerValue();
+		timer.innerText = getTimerValue();
 
 		if (countDownTimer < 0) {
 			footer.style.backgroundColor = overtimeBackgroundColor;
